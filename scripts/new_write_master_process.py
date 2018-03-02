@@ -40,10 +40,12 @@ def proc_dict(CDAT,RDAT):
 
         if SEDESC.lower().startswith('func_'):
             if SEDESC in PROC_OUT.keys():
-                RUNNUM = len(PROC_OUT[SEDESC])
+                RUNNUM = len(PROC_OUT[SEDESC]) + 1
                 RUNNAME = 'run_{:02d}'.format(RUNNUM)
 
                 SE_OUT['run_name'] = RUNNAME
+            else:
+                SE_OUT['run_name'] = 'run_01'
 
         # Append to list if not exist
         PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)
