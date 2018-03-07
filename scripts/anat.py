@@ -4,11 +4,16 @@ from sys import argv
 import subprocess
 import os
 import json
+import shutil
+
+## Can this be combined with func/dti?
 
 def run_module(RAWDATA,MODULE,PARAMS):
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
+    subprocess.call(CMD,shell=True)
     return(OUTDATA)
+
 
 
 # Parse params and return script call string
@@ -21,10 +26,12 @@ def make_script_call(INDATA,MODULE,PARAMS):
         if PARAMS:
             OUTDATA = PARAMS['outfile']
 
+        # Copy dicoms over to ./dicom - leave here or move into module script?
         OUTSTR = 'dcm2nii_series.sh -d {} -o {}'.format(INDATA,OUTDATA)
+        shutil.copytree(INDATA,'dicom')
 
     elif MODULE.lower() == 'spm2_hcorr':
-        OUTSTR = 'spm2_hcorr -f {}'.format(INDATA)
+        OUTSTR = 'spm2_hcorr.bash -f {}'.format(INDATA)
         OUTDATA = 'h' + INDATA
         if PARAMS:
             if 'prefix' in PARAMS:
@@ -33,7 +40,7 @@ def make_script_call(INDATA,MODULE,PARAMS):
                 OUTDATA = PREFIX + INDATA
 
     elif MODULE.lower().startswith('fsl_bet'):
-        OUTSTR = 'bet_skullstrip -f {}'.format(INDATA)
+        OUTSTR = 'bet_skullstrip.bash -f {}'.format(INDATA)
         OUTDATA = 'e' + INDATA
         if PARAMS:
             if 'prefix' in PARAMS:
