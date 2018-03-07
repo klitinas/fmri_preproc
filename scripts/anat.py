@@ -6,8 +6,6 @@ import os
 import json
 
 def run_module(RAWDATA,MODULE,PARAMS):
-    print(MODULE)
-    print(PARAMS)
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
     return(OUTDATA)
@@ -15,10 +13,15 @@ def run_module(RAWDATA,MODULE,PARAMS):
 
 # Parse params and return script call string
 def make_script_call(INDATA,MODULE,PARAMS):
+    OUTSTR=""
+    OUTDATA=""
+
     if MODULE.lower() == 'dcm2nii':
-        OUTSTR = 'run_dcm2nii.sh dicom/{}'.format(INDATA)
-        OUTDATA = 't1overlay.nii'
-        return OUTSTR, OUTDATA
+        OUTDATA = '{}.nii'.format(os.path.basename(os.getcwd()))
+        if PARAMS:
+            OUTDATA = PARAMS['outfile']
+
+        OUTSTR = 'dcm2nii_series.sh -d {} -o {}'.format(INDATA,OUTDATA)
 
     elif MODULE.lower() == 'spm2_hcorr':
         OUTSTR = 'spm2_hcorr -f {}'.format(INDATA)
@@ -29,8 +32,6 @@ def make_script_call(INDATA,MODULE,PARAMS):
                 OUTSTR += ' -p {}'.format(PREFIX)
                 OUTDATA = PREFIX + INDATA
 
-        return OUTSTR, OUTDATA
-
     elif MODULE.lower().startswith('fsl_bet'):
         OUTSTR = 'bet_skullstrip -f {}'.format(INDATA)
         OUTDATA = 'e' + INDATA
@@ -40,7 +41,8 @@ def make_script_call(INDATA,MODULE,PARAMS):
                 OUTSTR += ' -p {}'.format(PREFIX)
                 OUTDATA = PREFIX + INDATA
 
-        return OUTSTR, OUTDATA
+    print(OUTSTR)
+    return OUTSTR, OUTDATA
 
 # Stub to get input of a module
 def generate_raw_input():
@@ -51,6 +53,9 @@ def generate_module_output():
 
 def preproc(JSON):
     print('Starting preprocessing on anatomy series')
+
+    PDIR = os.getcwd()
+
     NUMSERIES = len(JSON)
     print('\n... {} series types found.'.format(NUMSERIES))
 
@@ -59,6 +64,7 @@ def preproc(JSON):
         print('\n{}'.format(SERIESTYPE))
 
         for SE_INFO in JSON[SERIESTYPE]:
+            os.chdir(PDIR)
 
             RAWDATA = SE_INFO['rawdata']
             MODULES = SE_INFO['module_order']
@@ -67,6 +73,18 @@ def preproc(JSON):
             print('\nStarting processing on {}...\n'.format(RAWDATA))
             print('Attempting the following modules:\n')
             print('   ---\t'.join(SE_INFO['module_order']))
+
+            # Here, make the series directory?
+            # Absolute path for now?
+            WORKINGDIR = '{}/anatomy/{}'.format(os.getcwd(),SERIESTYPE)
+            print("Working directory: {}".format(WORKINGDIR))
+
+            if not os.path.isdir(WORKINGDIR):
+                os.makedirs(WORKINGDIR)
+
+            # Absolute path of DCMDIR since we're changing into WORKINGDIR
+            RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
+            os.chdir(WORKINGDIR)
 
             WORKINGDATA = RAWDATA
             for MODULE in MODULES:
