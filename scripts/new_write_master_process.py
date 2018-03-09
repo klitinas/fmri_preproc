@@ -53,6 +53,26 @@ def proc_dict(CDAT,RDAT):
 
     return PROC_OUT
 
+# Adding this for fieldmap dicoms
+def proc_dict_fm(CDAT,RDAT):
+    PROC_OUT = {}
+    for SENUM in sorted(RDAT.keys()):
+
+        RAWDATA = RDAT[SENUM]['rawdata']
+        SEDESC = RDAT[SENUM]['sedesc']
+
+        SE_OUT = {}
+
+        SE_OUT['rawdata'] = RAWDATA
+        SE_OUT['sedesc'] = SEDESC
+
+        SE_OUT['module_order'] = ['cp_fieldmap_dcms']
+
+        # Append to list if not exist
+        PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)   
+    
+    return PROC_OUT    
+
 RAWFILE = argv[1]
 CONFIGFILE = argv[2]
 
@@ -68,6 +88,8 @@ if 'anat' in DAT_RAW.keys():
 if 'func' in DAT_RAW.keys():
     DOUT['func'] = proc_dict(DAT_CFG,DAT_RAW['func'])
 
+if 'func_fieldmap' in DAT_RAW.keys():
+    DOUT['func_fieldmap'] = proc_dict_fm(DAT_CFG,DAT_RAW['func_fieldmap']) 
 
 # Write out the json
 jfid = open('master_process_out.json','w')
