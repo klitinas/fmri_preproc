@@ -66,7 +66,7 @@ def proc_dict_fm(CDAT,RDAT):
         SE_OUT['rawdata'] = RAWDATA
         SE_OUT['sedesc'] = SEDESC
 
-        SE_OUT['module_order'] = ['cp_fieldmap_dcms']
+        SE_OUT['module_order'] = ['cp_fieldmap_dcms','fieldmap_prep']
 
         # Append to list if not exist
         PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)   
