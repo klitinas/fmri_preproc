@@ -38,7 +38,7 @@ def proc_dict(CDAT,RDAT):
             SE_OUT['phys_files'] = RDAT[SENUM]['phys_files']
 
 
-        if SEDESC.lower().startswith('func_'):
+        if SEDESC.lower().startswith('func_') or SEDESC.lower().startswith('dti_'):
             SE_OUT['run_name'] = 'run_01'
             if SEDESC in PROC_OUT.keys():
                 RUNNUM = len(PROC_OUT[SEDESC]) + 1
@@ -69,9 +69,9 @@ def proc_dict_fm(CDAT,RDAT):
         SE_OUT['module_order'] = ['cp_fieldmap_dcms','fieldmap_prep']
 
         # Append to list if not exist
-        PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)   
-    
-    return PROC_OUT    
+        PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)
+
+    return PROC_OUT
 
 RAWFILE = argv[1]
 CONFIGFILE = argv[2]
@@ -80,7 +80,7 @@ CONFIGFILE = argv[2]
 DAT_RAW = get_json(RAWFILE)
 DAT_CFG = get_json(CONFIGFILE)
 
-# Loop through the series types (TO DO: DTI)
+# Loop through the series types (TO DO: DTI non-mb)
 DOUT = {}
 if 'anat' in DAT_RAW.keys():
     DOUT['anat'] = proc_dict(DAT_CFG,DAT_RAW['anat'])
@@ -89,7 +89,10 @@ if 'func' in DAT_RAW.keys():
     DOUT['func'] = proc_dict(DAT_CFG,DAT_RAW['func'])
 
 if 'func_fieldmap' in DAT_RAW.keys():
-    DOUT['func_fieldmap'] = proc_dict_fm(DAT_CFG,DAT_RAW['func_fieldmap']) 
+    DOUT['func_fieldmap'] = proc_dict_fm(DAT_CFG,DAT_RAW['func_fieldmap'])
+
+if 'dti' in DAT_RAW.keys():
+    DOUT['dti'] = proc_dict(DAT_CFG,DAT_RAW['dti'])
 
 # Write out the json
 jfid = open('master_process_out.json','w')
