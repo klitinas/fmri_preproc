@@ -171,14 +171,14 @@ def preproc(JSON):
             	# Absolute path of DCMDIR since we're changing into WORKINGDIR
             	RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
 
-            elif SERIESTYPE.lower().startwith('dti_'):
+            elif SERIESTYPE.lower().startswith('dti_'):
 
                 # TODO:  conv EPI
                 if SE_INFO['acqtype'] == 'multiband':
                     RUNNAME = SE_INFO['run_name']
-                    RAWDATA = os.path.abspath('{}/dti/{}/{}/{}'.format(os.getcwd(),TASK,RUNNAME,RAWDATA))
+                    RAWDATA = os.path.abspath('{}/dti/{}/{}/{}'.format(os.getcwd(),SERIESTYPE.lower(),RUNNAME,RAWDATA))
 
-                    WORKINGDIR = '{}/dti/{}/{}'.format(os.getcwd(),SERIETYPE.lower(),RUNNAME)
+                    WORKINGDIR = '{}/dti/{}/{}'.format(os.getcwd(),SERIESTYPE.lower(),RUNNAME)
 
             else:
                 WORKINGDIR = '{}/anatomy/{}'.format(os.getcwd(),SERIESTYPE)
@@ -213,7 +213,9 @@ if __name__ == '__main__':
     #if 'func_fieldmap' in JSON.keys():
     #    JSON = JSON['func_fieldmap']
 
-    if 'func' in JSON.keys():
-        JSON = JSON['func']
+    #if 'func' in JSON.keys():
+    #    JSON = JSON['func']
 
+    if 'dti' in JSON.keys():
+        JSON = JSON['dti']
     preproc(JSON)
