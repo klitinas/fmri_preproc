@@ -11,7 +11,7 @@ import shutil
 def run_module(RAWDATA,MODULE,PARAMS):
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
-    subprocess.call(CMD,shell=True)
+    #subprocess.call(CMD,shell=True)
     print(CMD)
     return(OUTDATA)
 
@@ -21,7 +21,7 @@ def run_module(RAWDATA,MODULE,PARAMS):
 def make_script_call(INDATA,MODULE,PARAMS):
     OUTSTR=""
     OUTDATA=""
-    
+
     if MODULE.lower() == 'dcm2nii':
         OUTDATA = '{}.nii'.format(os.path.basename(os.getcwd()))
         if PARAMS:
@@ -51,9 +51,9 @@ def make_script_call(INDATA,MODULE,PARAMS):
 
     elif MODULE.lower() == 'recon_multiband':
         if PARAMS:
-            print(PARAMS)            
- 
-        OUTDATA = os.path.basename(os.path.dirname(INDATA)) + '.nii'       
+            print(PARAMS)
+
+        OUTDATA = os.path.basename(os.path.dirname(INDATA)) + '.nii'
         OUTSTR = 'mux_recon_func.bash -f {} -h -o {}'.format(INDATA,OUTDATA)
 
     elif MODULE.lower() == "slicetiming_spm8_multiband":
@@ -78,7 +78,7 @@ def make_script_call(INDATA,MODULE,PARAMS):
             if 'tert' in PARAMS:
                 TERT = PARAMS['tert']
                 OUTSTR += ' -t {}'.format(TERT)
-        
+
 
     elif MODULE.lower() == "retroicor_multiband":
         OUTSTR = 'multiband_retroicor.bash -f {}'.format(INDATA)
@@ -165,11 +165,20 @@ def preproc(JSON):
                 elif SE_INFO['acqtype'] == 'epi':
                     RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
 
-            elif SERIESTYPE.lower().startswith('fm_') and 'dti' not in SERIESTYPE.lower(): 
+            elif SERIESTYPE.lower().startswith('fm_') and 'dti' not in SERIESTYPE.lower():
                 WORKINGDIR = '{}/func/fieldmaps/{}'.format(os.getcwd(),SERIESTYPE)
 
             	# Absolute path of DCMDIR since we're changing into WORKINGDIR
             	RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
+
+            elif SERIESTYPE.lower().startwith('dti_'):
+
+                # TODO:  conv EPI
+                if SE_INFO['acqtype'] == 'multiband':
+                    RUNNAME = SE_INFO['run_name']
+                    RAWDATA = os.path.abspath('{}/dti/{}/{}/{}'.format(os.getcwd(),TASK,RUNNAME,RAWDATA))
+
+                    WORKINGDIR = '{}/dti/{}/{}'.format(os.getcwd(),SERIETYPE.lower(),RUNNAME)
 
             else:
                 WORKINGDIR = '{}/anatomy/{}'.format(os.getcwd(),SERIESTYPE)
