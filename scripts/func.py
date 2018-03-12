@@ -11,7 +11,7 @@ import shutil
 def run_module(RAWDATA,MODULE,PARAMS):
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
-    #subprocess.call(CMD,shell=True)
+    subprocess.call(CMD,shell=True)
     print(CMD)
     return(OUTDATA)
 
@@ -25,11 +25,26 @@ def make_script_call(INDATA,MODULE,PARAMS):
     if MODULE.lower() == 'dcm2nii':
         OUTDATA = '{}.nii'.format(os.path.basename(os.getcwd()))
         if PARAMS:
-            OUTDATA = PARAMS['outfile']
+            if 'outfile' in PARAMS:
+                OUTDATA = PARAMS['outfile']
+                
 
-        # Copy dicoms over to ./dicom - leave here or move into module script?
         OUTSTR = 'dcm2nii_series.sh -d {} -o {}'.format(INDATA,OUTDATA)
-        shutil.copytree(INDATA,'dicom')
+
+        # TODO: account for repeat runs. Copy dicoms over to ./dicom - leave here or move into module script?
+        if not os.path.isdir('dicom'):
+            os.makedirs('dicom')
+
+
+        src_files = os.listdir(INDATA)
+        for file_name in src_files:
+            full_file_name = os.path.join(INDATA, file_name)
+            if (os.path.isfile(full_file_name)):
+                shutil.copy(full_file_name, 'dicom')
+
+
+
+        #shutil.copytree(INDATA,'dicom')
 
     elif MODULE.lower() == 'spm2_hcorr':
         OUTSTR = 'spm2_hcorr.bash -f {}'.format(INDATA)
@@ -203,6 +218,7 @@ def preproc(JSON):
                 WORKINGDATA = run_module(WORKINGDATA,MODULE,THIS_MODULE_PARAMS)
 
 
+    os.chdir(PDIR)
 
 if __name__ == '__main__':
 
