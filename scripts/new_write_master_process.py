@@ -8,6 +8,13 @@ def get_json(FILENAME):
     with open(FILENAME) as f:
         return json.load(f)
 
+def count_sedesc(d,SEDESC):
+    c = 0
+    for dd in d.keys():
+        if d[dd]['sedesc'].lower() == SEDESC.lower():
+            c+=1
+
+    return c    
 
 def proc_dict(CDAT,RDAT):
     PROC_OUT = {}
@@ -46,6 +53,15 @@ def proc_dict(CDAT,RDAT):
 
                 SE_OUT['run_name'] = RUNNAME
 
+		# Account for if multiple series of given anatomy scan run
+        if SEDESC.lower().startswith('t1') or SEDESC.lower().startswith('t2') or SEDESC.lower().startswith('vasc'):
+     
+            if count_sedesc(RDAT,SEDESC) > 1:
+                RUNNAME = '{}_s{}'.format(SEDESC.lower(),SENUM)
+                SE_OUT['run_name'] = RUNNAME 
+
+                if 'dcm2nii' in SE_OUT['module_order']:
+                    SE_OUT['module_params']['dcm2nii']['outname'] = RUNNAME
 
         # Append to list if not exist
         PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)
