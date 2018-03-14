@@ -3,6 +3,7 @@
 from sys import argv
 import json
 import os
+import copy
 
 def get_json(FILENAME):
     with open(FILENAME) as f:
@@ -18,8 +19,8 @@ def count_sedesc(d,SEDESC):
 
 def proc_dict(CDAT,RDAT):
     PROC_OUT = {}
-    for SENUM in sorted(RDAT.keys()):
 
+    for SENUM in sorted(RDAT.keys()):
         RAWDATA = RDAT[SENUM]['rawdata']
         SEDESC = RDAT[SENUM]['sedesc']
 
@@ -36,7 +37,7 @@ def proc_dict(CDAT,RDAT):
             SE_OUT['module_order'] = CFG_SERIES['module_order']
 
         if 'module_params' in CFG_SERIES.keys():
-            SE_OUT['module_params'] = CFG_SERIES['module_params']
+            SE_OUT['module_params'] = copy.deepcopy(CFG_SERIES['module_params'])
 
         if 'acqtype' in RDAT[SENUM].keys():
             SE_OUT['acqtype'] = RDAT[SENUM]['acqtype']
@@ -53,16 +54,16 @@ def proc_dict(CDAT,RDAT):
 
                 SE_OUT['run_name'] = RUNNAME
 
+
 		# Account for if multiple series of given anatomy scan run
         if SEDESC.lower().startswith('t1') or SEDESC.lower().startswith('t2') or SEDESC.lower().startswith('vasc'):
-     
             if count_sedesc(RDAT,SEDESC) > 1:
                 RUNNAME = '{}_s{}'.format(SEDESC.lower(),SENUM)
                 SE_OUT['run_name'] = RUNNAME 
 
                 if 'dcm2nii' in SE_OUT['module_order']:
-                    SE_OUT['module_params']['dcm2nii']['outname'] = RUNNAME
-
+                    SE_OUT['module_params']['dcm2nii']['outname'] = RUNNAME + '.nii'
+        
         # Append to list if not exist
         PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)
 
