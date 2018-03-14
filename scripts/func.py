@@ -25,8 +25,8 @@ def make_script_call(INDATA,MODULE,PARAMS):
     if MODULE.lower() == 'dcm2nii':
         OUTDATA = '{}.nii'.format(os.path.basename(os.getcwd()))
         if PARAMS:
-            if 'outfile' in PARAMS:
-                OUTDATA = PARAMS['outfile']
+            if 'outname' in PARAMS:
+                OUTDATA = PARAMS['outname']
                 
 
         OUTSTR = 'dcm2nii_series.sh -d {} -o {}'.format(INDATA,OUTDATA)
