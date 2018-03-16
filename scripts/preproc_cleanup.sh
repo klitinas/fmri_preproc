@@ -10,7 +10,7 @@ RAWFILES=$(find ./ -name "*data" -o -name "*prep" -o -name "*ctrl" | grep -v raw
 
 if [ ! -z "${RAWFILES}" ]
 then
-	echo mkdir -p ./raw/pfiles
+	mkdir -p ./raw/pfiles
 fi
 
 echo -e "\nMoving raw files..."
