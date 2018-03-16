@@ -3,15 +3,17 @@
 PDIR=`pwd`
 SUBJECT=$(basename $PDIR)
 
+echo -e "\nDoing some cleanup.\n"
 
 # RAW multiband
-RAWFILES=$(find ./ -name "*data" -o -name "*prep" -o -name "*ctrl")
+RAWFILES=$(find ./ -name "*data" -o -name "*prep" -o -name "*ctrl" | grep -v raw/pfiles)
 
 if [ ! -z "${RAWFILES}" ]
 then
 	echo mkdir -p ./raw/pfiles
 fi
 
+echo -e "\nMoving raw files..."
 for RAWFILE in $RAWFILES
 do
 	BASEFILE=$(basename $RAWFILE)
@@ -19,15 +21,18 @@ do
 	TASK=$(echo $RAWFILE | awk -F/ '{print $(NF-2)}')
 	NEWNAME="${SUBJECT}_${TASK}_${RUNNAME}_${BASEFILE}"
 	echo mv $RAWFILE ./raw/pfiles/$NEWNAME
+	mv $RAWFILE ./raw/pfiles/$NEWNAME
 done
 
 
 # Physio
-PHYSFILES=$(find ./func/ -name "*Resp.dat" -o -name "*ECG.dat" -o -name "*resp.dat")
+echo -e "\nMoving physio files..."
+PHYSFILES=$(find ./func/ -name "*Resp.dat" -o -name "*ECG.dat" -o -name "*resp.dat" -o -name "PPG*" -o -name "RESP*")
 if [ ! -z "${PHYSFILES}" ]
 then
 	mkdir -p ./raw/physio/
-	echo mv $PHYSFILES ./raw/physio/
+	# echo mv $PHYSFILES ./raw/physio/
+	mv $PHYSFILES ./raw/physio/
 fi
 
 # DTI
