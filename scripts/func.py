@@ -44,8 +44,6 @@ def make_script_call(INDATA,MODULE,PARAMS):
 
 
 
-        #shutil.copytree(INDATA,'dicom')
-
     elif MODULE.lower() == 'spm2_hcorr':
         OUTSTR = 'spm2_hcorr.bash -f {}'.format(INDATA)
         OUTDATA = 'h' + INDATA
