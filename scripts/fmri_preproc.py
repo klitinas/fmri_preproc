@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from sys import argv
+import subprocess
 import json
 import os
 import anat
@@ -22,3 +23,6 @@ if 'func' in JPROC.keys():
 
 if 'dti' in JPROC.keys():
     func.preproc(JPROC['dti'])
+
+# Cleanup the directory
+subprocess.call('preproc_cleanup.sh',shell=True)
