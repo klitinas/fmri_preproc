@@ -27,7 +27,7 @@ def make_script_call(INDATA,MODULE,PARAMS):
         if PARAMS:
             if 'outname' in PARAMS:
                 OUTDATA = PARAMS['outname']
-                
+
 
         OUTSTR = 'dcm2nii_series.sh -d {} -o {}'.format(INDATA,OUTDATA)
 
@@ -127,11 +127,10 @@ def setlocalenvironment():
     SCRIPTDIR = os.path.dirname(SCRIPTPATH)
     LOCALFILE = os.path.dirname(SCRIPTDIR) + '/.local'
     if os.path.isfile(LOCALFILE):
-        GCMD = 'grep SPM12PATH {} | cut -d= -f2'.format(LOCALFILE)
-        print(GCMD)
-        SPM12PATH = subprocess.call(GCMD,shell=True)
-        print(SPM12PATH[0])
-        os.environ['SPM12PATH'] = SPM12PATH
+        for line in open(LOCALFILE):
+            if "SPM12PATH" in line:
+                SPM12PATH = line.split('=')[1]
+                os.environ['SPM12PATH'] = SPM12PATH
 
 # Stub to get input of a module
 def generate_raw_input():
@@ -192,8 +191,8 @@ def preproc(JSON):
             elif SERIESTYPE.lower().startswith('fm_') and 'dti' not in SERIESTYPE.lower():
                 WORKINGDIR = '{}/func/fieldmaps/{}'.format(os.getcwd(),SERIESTYPE)
 
-            	# Absolute path of DCMDIR since we're changing into WORKINGDIR
-            	RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
+                # Absolute path of DCMDIR since we're changing into WORKINGDIR
+                RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
 
             elif SERIESTYPE.lower().startswith('dti_'):
 
@@ -207,8 +206,8 @@ def preproc(JSON):
             else:
                 WORKINGDIR = '{}/anatomy/{}'.format(os.getcwd(),SERIESTYPE)
 
-            	# Absolute path of DCMDIR since we're changing into WORKINGDIR
-            	RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
+                # Absolute path of DCMDIR since we're changing into WORKINGDIR
+                RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
 
             print("Working directory: {}".format(WORKINGDIR))
 
