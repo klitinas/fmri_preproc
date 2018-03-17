@@ -122,6 +122,17 @@ def make_script_call(INDATA,MODULE,PARAMS):
 
     return OUTSTR, OUTDATA
 
+def setlocalenvironment():
+    SCRIPTPATH = os.path.realpath(__file__)
+    SCRIPTDIR = os.path.dirname(SCRIPTPATH)
+    LOCALFILE = os.path.dirname(SCRIPTDIR) + '/.local'
+    if os.path.isfile(LOCALFILE):
+        GCMD = 'grep SPM12PATH {} | cut -d= -f2'.format(LOCALFILE)
+        print(GCMD)
+        SPM12PATH = subprocess.call(GCMD,shell=True)
+        print(SPM12PATH[0])
+        os.environ['SPM12PATH'] = SPM12PATH
+
 # Stub to get input of a module
 def generate_raw_input():
     return TRUE
