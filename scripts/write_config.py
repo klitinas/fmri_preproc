@@ -36,11 +36,17 @@ for RUNNAME in LRUNS:
             D_THISTYPE = {}
             D_THISTYPE['nreps'] = NRUNS
 
-            # Multiband
             TASK = RUNNAME.lower().split('_')[1]
-            FMNAME = "FM_{}".format(TASK)
-            D_THISTYPE['module_order'] = ["recon_multiband","retroicor_multiband","slicetiming_spm8_multiband","epi_fm_realign_unwarp"]
-            D_THISTYPE['module_params'] = {"epi_fm_realign_unwarp":{"tert": 48.24,"fm_name": FMNAME}}
+
+            # Account for multiband/spiral/convEPI types
+            # TODO: how to put in physio correction?
+            if ACQTYPE.lower() == 'mb':
+                FMNAME = "FM_{}".format(TASK)
+                D_THISTYPE['module_order'] = ["recon_multiband","retroicor_multiband","slicetiming_spm8_multiband","epi_fm_realign_unwarp"]
+                D_THISTYPE['module_params'] = {"epi_fm_realign_unwarp":{"tert": 48.24,"fm_name": FMNAME}}
+
+            elif ACQTYPE.lower() == 'spiral':
+                D_THISTYPE['module_order'] = ["despike","recon_cprec","retroicor","slicetiming_spm8","mcflirt_fsl_v5.0.x"]
 
             DOUT[RUNNAME.lower()] = D_THISTYPE
 

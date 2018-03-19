@@ -40,7 +40,7 @@ if [ $FETCH_PROTOCOL -eq 1 ]
 then
 	DCMFILE=$(find ./dicom/ -type f -name "i*MRDC*" | head -n1)
 	fetch_protocol.sh $DCMFILE
-	write_config.py .protocol
+	write_config.py .protocol $ACQTYPE
 	mv test_config.json $OUTFILE 2>/dev/null
 fi
 
