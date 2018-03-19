@@ -16,6 +16,11 @@ echo -e "\n\nExecuting:\n$0 $*\n\n"
 
 SCRIPTPATH=$(dirname $0)
 
+if [ -z "echo ${SPM12PATH}" ]
+then
+  SPM12PATH=/export/prog/spm/spm12
+fi
+
 # Defaults
 VDMFILE=vdm5_fpm0000.img
 
@@ -53,8 +58,8 @@ echo -e "\nUsing reference image: ${REFFILE}.\n"
 matlab -nosplash -nodesktop << EOF
 
 	% Paths, probably make this automated
-	addpath('/export/prog/spm/spm12')
-	addpath('/export/prog/spm/spm12/toolbox/FieldMap/')
+	addpath('${SPM12PATH}')
+	addpath('${SPM12PATH}/toolbox/FieldMap/')
 	addpath('${SCRIPTPATH}/../mfiles')
 	
 	%fm_realign_unwarp('${NII}','${VDMFILE}','../run_01/run_01.nii');	

@@ -5,6 +5,12 @@
 
 echo -e "\nExecuting: $0 $*\n"
 
+if [ -z "echo ${SPM12PATH}" ]
+then
+  SPM12PATH=/export/prog/spm/spm12
+fi
+
+
 # Optional input is the dicom directory
 if [ ! -z $1 ]
 then

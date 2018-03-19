@@ -9,6 +9,9 @@ import func
 
 PROCFILE = argv[1]
 
+func.setlocalenvironment()
+
+
 with open(PROCFILE) as f:
     JPROC = json.load(f)
 
@@ -25,4 +28,4 @@ if 'dti' in JPROC.keys():
     func.preproc(JPROC['dti'])
 
 # Cleanup the directory
-subprocess.call('preproc_cleanup.sh',shell=True)
+ subprocess.call('preproc_cleanup.sh',shell=True)

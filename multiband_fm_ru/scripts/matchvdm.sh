@@ -24,11 +24,14 @@ PDIR=`pwd`
 FMFILE=fpm0000.img
 RUNNII=run_01.nii
 TERT=48.24
-#TERT=28.70
-#TERT=51.84 bpreward
-#TERT=51.84
 MAGFILE=my_fieldmap_mag_brain.nii
 BLIPDIR=+1
+
+if [ -z "echo ${SPM12PATH}" ]
+then
+  SPM12PATH=/export/prog/spm/spm12
+fi
+
 
 # Parse options
 while [ $# -gt 0 ]
@@ -66,8 +69,10 @@ echo -e "\nCreating VDM file...\n"
 matlab -nosplash -nodesktop << EOF
 
 	% Fix for specific machine
-	addpath('/export/prog/spm/spm12')
-	addpath('/export/prog/spm/spm12/toolbox/FieldMap')
+	%addpath('/export/prog/spm/spm12')
+	addpath('${SPM12PATH}')
+	%addpath('/export/prog/spm/spm12/toolbox/FieldMap')
+	addpath('${SPM12PATH}/toolbox/FieldMap')
 	IP = FieldMap('Initialise'); % Gets default params from pm_defaults
 
 	%fm = 'fpm0000.img';
