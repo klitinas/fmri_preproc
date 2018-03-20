@@ -5,13 +5,14 @@ import subprocess
 import os
 import json
 import shutil
+import pdf_summary as ps
 
 ## Can this be combined with func/dti?
 
 def run_module(RAWDATA,MODULE,PARAMS):
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
-    subprocess.call(CMD,shell=True)
+    #subprocess.call(CMD,shell=True)
     print(CMD)
     return(OUTDATA)
 
@@ -175,6 +176,8 @@ def preproc(JSON):
                 RUNNAME = SE_INFO['run_name']
                 WORKINGDIR = '{}/func/{}/{}'.format(os.getcwd(),TASK,RUNNAME)
 
+                PDF_OUTPUT = 'TASK: {}\n\nRUN:{}'.format(TASK,RUNNAME)
+
                 # Absolute path of DCMDIR since we're changing into WORKINGDIR
                 # Depends on acqtype:
                     # Spiral in raw/pfiles
@@ -191,8 +194,11 @@ def preproc(JSON):
             elif SERIESTYPE.lower().startswith('fm_') and 'dti' not in SERIESTYPE.lower():
                 WORKINGDIR = '{}/func/fieldmaps/{}'.format(os.getcwd(),SERIESTYPE)
 
+                PDF_OUTPUT = 'SERIES TYPE: {}\n\nSERIES NAME:{}'.format(SERIESTYPE.lower(),RAWDATA)
+
                 # Absolute path of DCMDIR since we're changing into WORKINGDIR
                 RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
+
 
             elif SERIESTYPE.lower().startswith('dti_'):
 
@@ -203,18 +209,27 @@ def preproc(JSON):
 
                     WORKINGDIR = '{}/dti/{}/{}'.format(os.getcwd(),SERIESTYPE.lower(),RUNNAME)
 
+                    PDF_OUTPUT = 'DTI RUN NAME: {}\n\nRUN:{}'.format(SERIESTYPE.lower(),RUNNAME)
+
             else:
                 WORKINGDIR = '{}/anatomy/{}'.format(os.getcwd(),SERIESTYPE)
+
+                PDF_OUTPUT = 'SERIES TYPE: {}\n\nSERIES NAME:{}'.format(SERIESTYPE.lower(),RAWDATA)
 
                 # Absolute path of DCMDIR since we're changing into WORKINGDIR
                 RAWDATA = os.path.abspath('dicom/{}'.format(RAWDATA))
 
+
             print("Working directory: {}".format(WORKINGDIR))
+            
 
             if not os.path.isdir(WORKINGDIR):
                 os.makedirs(WORKINGDIR)
 
             os.chdir(WORKINGDIR)
+
+            # TODO: make the pdf header page
+            ps.series_header('header',PDF_OUTPUT)
 
             WORKINGDATA = RAWDATA
             for MODULE in MODULES:

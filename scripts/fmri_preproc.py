@@ -6,11 +6,13 @@ import json
 import os
 import anat
 import func
+import pdf_summary as ps
 
 PROCFILE = argv[1]
 
-func.setlocalenvironment()
+ps.header()
 
+func.setlocalenvironment()
 
 with open(PROCFILE) as f:
     JPROC = json.load(f)
@@ -27,5 +29,8 @@ if 'func' in JPROC.keys():
 if 'dti' in JPROC.keys():
     func.preproc(JPROC['dti'])
 
+# Combine all intermediate summary pdfs
+ps.bundle()
+
 # Cleanup the directory
- subprocess.call('preproc_cleanup.sh',shell=True)
+subprocess.call('preproc_cleanup.sh',shell=True)
