@@ -95,7 +95,7 @@ fi
 #es=`dicom_hdr $dicom | grep "0043 102c" | sed 's/0043 102c[ ]*[0-9] \[[0-9 ]*\] \/\/[ ]*\/\/ //'`
 #etl=`dicom_hdr $dicom | grep "0018 0081" | sed 's/0018 0081[ ]*[0-9] \[[0-9 ]*\] \/\/[ ]*ACQ Echo Time\/\///'`
 es=`dcmheader.py $dicom | grep "0043, 102c" | awk '{print $NF}'`
-etl=`dcmheader.py $dicom | grep "0018, 0081" | awk '{print $NF}' | sed "s/'//g"`
+etl=`dcmheader.py $dicom | grep "0018, 0081" | awk '{print $NF}' | sed "s/'//g" | sed 's/"//g'`
 trl=`echo "scale=4;$es * $etl / 1000 / 1000" | bc`
 
 echo -e "\nParameters detected:"
