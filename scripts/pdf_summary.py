@@ -42,11 +42,22 @@ def series_header(FILENAME,TEXT):
     txt2pdf(FILENAME+'.txt')
 
 def header():
+    SCRIPTPATH = os.path.dirname(os.path.realpath(argv[0]))
+
+    CDIR = os.getcwd()
+    os.chdir(SCRIPTPATH)
+    try: 
+    	VERLABEL = subprocess.check_output(["git", "describe"]).strip()
+    except:
+		VERLABEL = '?'
+
+    os.chdir(CDIR)
     DATE = datetime.datetime.now()
     f = open('preproc_header.txt','w')
     f.write('Date: {}'.format(DATE))
     f.write('\nHost: {}'.format(socket.gethostname()))
     f.write('\nDir: {}'.format(os.getcwd()))
+    f.write('\nVer: fmri_preproc {}'.format(VERLABEL))
     f.close()
 
     txt2pdf('preproc_header.txt')
