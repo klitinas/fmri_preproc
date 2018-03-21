@@ -12,7 +12,7 @@ import pdf_summary as ps
 def run_module(RAWDATA,MODULE,PARAMS):
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
-    #subprocess.call(CMD,shell=True)
+    subprocess.call(CMD,shell=True)
     print(CMD)
     return(OUTDATA)
 
