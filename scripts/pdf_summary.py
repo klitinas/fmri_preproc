@@ -22,7 +22,7 @@ def txt2pdf(FILE):
     os.remove(FILE)
 
 def bundle():
-    CMD_FIND = "find ./ -name '*.pdf' | xargs ls -rt > pdf_lst"
+    CMD_FIND = "find ./ -name '*.pdf' | xargs --no-run-if-empty ls -rt > pdf_lst"
     subprocess.call(CMD_FIND,shell=True)
 
     f = open('pdf_lst','r')
@@ -30,14 +30,18 @@ def bundle():
     SFILES = ' '.join(l).replace('\n',' ')
     CMD_PDF = "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=preproc.pdf {} 2>/dev/null".format(SFILES)
     subprocess.call(CMD_PDF,shell=True)
-	#rm -f PDF_LIST
 
+    # Delete the temporary pdf files.
+    for TMPFILE in l:
+        print('\nRemoving ' + TMPFILE)
+        os.remove(TMPFILE.replace('\n',''))
+
+    os.remove('pdf_lst')
 
 def series_header(FILENAME,TEXT):
     f = open(FILENAME+'.txt','w')
     f.write(TEXT)
     f.close()
-    print(FILENAME+'.txt')
 
     txt2pdf(FILENAME+'.txt')
 
