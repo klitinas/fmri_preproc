@@ -130,7 +130,7 @@ def setlocalenvironment():
     if os.path.isfile(LOCALFILE):
         for line in open(LOCALFILE):
             if "SPM12PATH" in line:
-                SPM12PATH = line.split('=')[1]
+                SPM12PATH = line.split('=')[1].replace('\n','')
                 os.environ['SPM12PATH'] = SPM12PATH
 
 # Stub to get input of a module
