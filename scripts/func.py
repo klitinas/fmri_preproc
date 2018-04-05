@@ -12,8 +12,8 @@ import pdf_summary as ps
 def run_module(RAWDATA,MODULE,PARAMS):
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
-    subprocess.call(CMD,shell=True)
     print(CMD)
+    #subprocess.call(CMD,shell=True)
     return(OUTDATA)
 
 
@@ -32,7 +32,7 @@ def make_script_call(INDATA,MODULE,PARAMS):
 
         OUTSTR = 'dcm2nii_series.sh -d {} -o {}'.format(INDATA,OUTDATA)
 
-        # TODO: account for repeat runs. Copy dicoms over to ./dicom - leave here or move into module script?
+        # Account for repeat runs. Copy dicoms over to ./dicom 
         if not os.path.isdir('dicom'):
             os.makedirs('dicom')
 
@@ -107,6 +107,23 @@ def make_script_call(INDATA,MODULE,PARAMS):
         OUTSTR = ""
         OUTDATA = ""
 
+    elif MODULE.lower() == "itrec_offset":
+        #TODO: fix me (standard paths)
+        #print(os.path.INDATA)
+        ABSPATH = os.path.realpath(INDATA)
+        OUTDATA = os.path.basename(os.path.dirname(ABSPATH)) + '.nii'
+        #OUTDATA = os.path.basename(os.path.dirname(INDATA)) + '.nii'
+        OUTSTR= 'recon_pfile.sh -f {} -r it -h -o {}'.format(INDATA,OUTDATA)
+
+    elif MODULE.lower() == "despike_interp":
+        # Copy rawfile to working dir here?
+        RAWFILENAME = os.path.basename(INDATA)
+        shutil.copyfile(INDATA,RAWFILENAME)
+
+        OUTSTR = 'despike_interp_2018.sh {} wpixscr.m wpixscr.log'.format(RAWFILENAME)
+        OUTDATA = 'f_' + RAWFILENAME
+        
+
     elif MODULE.lower() == "despike":
         OUTSTR = 'despike.bash -f {} -r'.format(INDATA)
         OUTDATA = 'f_' + INDATA
@@ -139,6 +156,10 @@ def generate_raw_input():
 
 # Stub to get output of a module
 def generate_module_output():
+    return TRUE
+
+# Stub to check if output of a module was created
+def check_module_output():
     return TRUE
 
 def preproc(JSON):
