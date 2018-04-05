@@ -27,7 +27,8 @@ TERT=48.24
 MAGFILE=my_fieldmap_mag_brain.nii
 BLIPDIR=+1
 
-if [ -z "echo ${SPM12PATH}" ]
+#if [ -z "echo ${SPM12PATH}" ]
+if [ -z "${SPM12PATH}" ]
 then
   SPM12PATH=/export/prog/spm/spm12
 fi

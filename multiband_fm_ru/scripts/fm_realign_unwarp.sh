@@ -16,7 +16,7 @@ echo -e "\n\nExecuting:\n$0 $*\n\n"
 
 SCRIPTPATH=$(dirname $0)
 
-if [ -z "echo ${SPM12PATH}" ]
+if [ -z "${SPM12PATH}" ]
 then
   SPM12PATH=/export/prog/spm/spm12
 fi
