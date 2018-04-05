@@ -17,7 +17,9 @@ d['func_fieldmap'] = {}
 # need also func dicom field maps
 
 with open(DATFILE,'r') as fid:
-    for line in sorted(fid,key=lambda x: int(x[5])):
+    #for line in sorted(fid,key=lambda x: int(x[5])):
+    for line in sorted(fid,key=lambda line: line.split()[4]):
+        print(line)
         lst = line.strip().split(' ')
         RAW = lst[0]
         SUBJ = lst[1]
@@ -30,13 +32,24 @@ with open(DATFILE,'r') as fid:
 
         if SEDESC.lower().startswith('func'):
             SETYPE = 'func'
-
             if RAW.lower().endswith('.data'):
                 ACQTYPE = 'multiband'
             elif RAW.lower().startswith('s0'):
                 ACQTYPE = 'epi'
             elif RAW.lower().endswith('.7'):
                 ACQTYPE = 'spiral'
+
+                # Need to account for same series number for a task
+                LSERIES = []
+                for kn in d['func'].keys():
+                    if kn.startswith(SENUM):
+                        LSERIES.append(kn)
+
+                NTHISSERIESNUMEXISTING = len(LSERIES)
+                THISNUM = len(LSERIES) + 1
+                SENUM = '{}_{:02d}'.format(SENUM,THISNUM)
+
+
 
             d['func'][SENUM] = {}
             d['func'][SENUM]['rawdata'] = RAW;
@@ -81,8 +94,6 @@ with open(DATFILE,'r') as fid:
             d['spectro'][SENUM]['rawdata'] = RAW
             d['spectro'][SENUM]['sedesc'] = SEDESC
 
-
-#jfid.write(json.dumps(d, ensure_ascii=False))
 json_data = json.dumps(d, ensure_ascii=False)
 python_obj = json.loads(json_data)
 jfid.write(json.dumps(python_obj, sort_keys=True, indent=4))
