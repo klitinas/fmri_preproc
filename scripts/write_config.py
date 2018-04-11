@@ -7,6 +7,9 @@ import xml.etree.ElementTree as ET
 from sys import argv
 
 PROTOCOLFILEXML = argv[1]
+OUTFILE = PROTOCOLFILEXML.replace('_session.xml','_config.json')
+
+#OUTFILE = argv[2]
 
 # Optional input for spiral/mb type (default: mb)
 if len(argv) > 2:
@@ -76,7 +79,8 @@ for RUNNAME in LRUNS:
             DOUT[RUNNAME.lower()] = D_THISTYPE
 
 # Write out the json
-jfid = open('test_config.json','w')
+#jfid = open('test_config.json','w')
+jfid = open(OUTFILE,'w')
 json_data = json.dumps(DOUT, ensure_ascii=False)
 python_obj = json.loads(json_data)
 jfid.write(json.dumps(python_obj, sort_keys=True, indent=4))
