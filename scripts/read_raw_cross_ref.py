@@ -19,7 +19,6 @@ d['func_fieldmap'] = {}
 with open(DATFILE,'r') as fid:
     #for line in sorted(fid,key=lambda x: int(x[5])):
     for line in sorted(fid,key=lambda line: line.split()[4]):
-        print(line)
         lst = line.strip().split(' ')
         RAW = lst[0]
         SUBJ = lst[1]
