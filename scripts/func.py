@@ -13,7 +13,7 @@ def run_module(RAWDATA,MODULE,PARAMS):
 
     CMD,OUTDATA = make_script_call(RAWDATA,MODULE,PARAMS)
     print(CMD)
-    #subprocess.call(CMD,shell=True)
+    subprocess.call(CMD,shell=True)
     return(OUTDATA)
 
 
@@ -111,9 +111,10 @@ def make_script_call(INDATA,MODULE,PARAMS):
         #TODO: fix me (standard paths)
         #print(os.path.INDATA)
         ABSPATH = os.path.realpath(INDATA)
-        OUTDATA = os.path.basename(os.path.dirname(ABSPATH)) + '.nii'
+        OUTDATA = os.path.basename(os.path.dirname(ABSPATH))
         #OUTDATA = os.path.basename(os.path.dirname(INDATA)) + '.nii'
         OUTSTR= 'recon_pfile.sh -f {} -r it -h -o {}'.format(INDATA,OUTDATA)
+        OUTDATA = OUTDATA + '.nii'
 
     elif MODULE.lower() == "despike_interp":
         # Copy rawfile to working dir here?
