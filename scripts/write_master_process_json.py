@@ -62,7 +62,11 @@ def proc_dict(CDAT,RDAT):
                 SE_OUT['run_name'] = RUNNAME 
 
                 if 'dcm2nii' in SE_OUT['module_order']:
-                    SE_OUT['module_params']['dcm2nii']['outname'] = RUNNAME + '.nii'
+					if 'module_params' not in SE_OUT.keys():
+						SE_OUT['module_params'] = {}
+						SE_OUT['module_params']['dcm2nii'] = {}
+					#SE_OUT['module_params']['dcm2nii']['outname'] = RUNNAME + '.nii'
+					SE_OUT['module_params']['dcm2nii']['outname'] = RUNNAME + '.nii'
         
         # Append to list if not exist
         PROC_OUT.setdefault(SEDESC, []).append(SE_OUT)
