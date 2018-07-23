@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Quick script to use dicom module to read dcm header
 # $Id: dcmheader.py 1418 2014-05-19 13:24:54Z klitinas $
