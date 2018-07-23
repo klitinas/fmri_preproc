@@ -6,7 +6,8 @@ then
     echo -e "\n$(basename $0): wrapper to do multiband field correction."
     echo -e "\nUSAGE: $(basename $0) -f <NIIFILETOCORRECT> [options]"
     echo -e "\nAvailable options:"
-    echo -e "\t-d <DCMDIR> \t\tdirectory containing field map dicoms (default pwd)\n"
+    echo -e "\t-d <DCMDIR> \t\tdirectory containing field map dicoms (default pwd)"
+    echo -e "\t-t <TERT> \t\tcontains timing value in ms derived from eht, etl CVs used to create vdm (default 48.24)\n"
     echo -e "\nAuthor  : Krisanne Litinas\n"
     echo -e "Revision$Id: fieldmap_correct.sh 1872 2018-01-05 20:24:00Z klitinas $\n"    
     exit
@@ -47,7 +48,16 @@ done
 
 
 echo -e "\nAttempting correction on ${RUNNII}.\n"
+
+# If needed, run fieldmap_prep.sh
 echo -e "\nPrepping the process.\n"
+if [ ! -f $DCMDIR/fpm0000.img ]
+then
+	TMPDIR=`pwd`
+	cd $DCMDIR
+	fieldmap_prep.sh
+	cd $TMPDIR
+fi
 
 echo -e "\nChecking that ${RUNNII} exists...\n"
 
